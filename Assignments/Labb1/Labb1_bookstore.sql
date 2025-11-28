@@ -4,21 +4,22 @@ BEGIN
         id INT IDENTITY(1,1) PRIMARY KEY,
         firstname VARCHAR(50) NOT NULL,
         lastname VARCHAR(100) NOT NULL,
-        dateofbirth DATE NOT NULL
+        dateofbirth DATE NOT NULL,
+        deathdate DATE NOT NULL
     );
 END;
 
-IF NOT EXISTS (SELECT 1 FROM tbl_authors)
+IF NOT EXISTS(SELECT 1 FROM tbl_authors)
 BEGIN
-    INSERT INTO tbl_authors (firstname, lastname, dateofbirth) VALUES
-        ('Friedrich', 'Nietzsche', '1844-10-15'),
-        ('Fjodor', 'Dostoevsky', '1821-11-11'),
-        ('Arthur', 'Schopenhauer', '1788-02-22'),
-        ('Emil', 'Cioran', '1911-04-08'),
-        ('Fernando', 'Pessoa', '1888-06-13'),
-        ('Albert','Camus','1913-11-07'),
-        ('Jean-Paul','Sartre','1905-06-21'),
-        ('Søren','Kierkegaard','1813-05-05');
+    INSERT INTO tbl_authors(firstname, lastname, dateofbirth, deathdate)VALUES
+    ('Friedrich', 'Nietzsche', '1844-10-15', '1900-08-25'),
+    ('Fjodor', 'Dostoevsky', '1821-11-11', '1881-02-09'),
+    ('Arthur', 'Schopenhauer', '1788-02-22', '1860-09-21'),
+    ('Emil', 'Cioran', '1911-04-08', '1995-06-20'),
+    ('Fernando', 'Pessoa', '1888-06-13', '1935-11-30'),
+    ('Albert', 'Camus', '1913-11-07', '1960-01-04'),
+    ('Jean-Paul', 'Sartre', '1905-06-21', '1980-04-15'),
+    ('Søren', 'Kierkegaard', '1813-05-05', '1855-11-11');
 END;
 
 IF OBJECT_ID('tbl_books', 'U') IS NULL
@@ -34,23 +35,22 @@ BEGIN
     );
 END;
 
-IF NOT EXISTS (SELECT 1 FROM tbl_books)
-BEGIN
-    INSERT INTO tbl_books (isbn, title, language, price, publishDate, authorId) VALUES
-        ('9780140441185', 'Thus Spoke Zarathustra', 'English', 169.00, '2005-01-01', 1),
-        ('9780140442038', 'Beyond Good and Evil', 'English', 159.00, '1990-01-01', 1),
-        ('9780140449136', 'Crime and Punishment', 'English', 229.00, '1993-01-01', 2),
-        ('9780140449242', 'The Brothers Karamazov', 'English', 219.00, '1990-01-01', 2),
-        ('9780486434103', 'The World as Will and Representation','English', 279.00, '1969-01-01', 3),
-        ('9780226100421', 'The Trouble with Being Born','English', 149.00, '1973-01-01', 4),
-        ('9781611454141', 'A Short History of Decay', 'English', 179.00, '1949-01-01', 4),
-        ('9780811216876', 'The Book of Disquiet', 'English', 299.00, '2002-01-01', 5),
-        ('9780679720201','The Stranger','English',179.00,'1942-01-01',6),
-        ('9780141186542','The Myth of Sisyphus','English',159.00,'1942-01-01',6),
-        ('9780140444490','Nausea','English',189.00,'1938-01-01',7),
-        ('9780415074578','Being and Nothingness','English',399.00,'1943-01-01',7),
-        ('9780140445718','Fear and Trembling','English',159.00,'1843-01-01',8),
-        ('9780691020429','The Sickness Unto Death','English',199.00,'1849-01-01',8);
+IF NOT EXISTS(SELECT 1 FROM tbl_books)BEGIN
+INSERT INTO tbl_books(isbn, title, language, price, publishDate, authorId)VALUES
+('9780140441185', 'Thus Spoke Zarathustra', 'English', 169.00, '2005-11-29', 1),
+('9780140442038', 'Beyond Good and Evil', 'English', 159.00, '2003-04-29', 1),
+('9780140449136', 'Crime and Punishment', 'English', 229.00, '2003-02-27', 2),
+('9780140449242', 'The Brothers Karamazov', 'English', 219.00, '2003-02-27', 2),
+('9780486434103', 'The World as Will and Representation', 'English', 279.00, '2005-06-10', 3),
+('9780226100421', 'The Trouble with Being Born', 'French', 149.00, '1998-10-01', 4),
+('9781611454141', 'A Short History of Decay', 'French', 179.00, '2012-11-15', 4),
+('9780811216876', 'The Book of Disquiet', 'Portuguese', 299.00, '2017-05-02', 5),
+('9780679720201', 'The Stranger', 'French', 179.00,'1989-03-13', 6),
+('9780141186542', 'The Myth of Sisyphus', 'French', 159.00, '2005-11-03', 6),
+('9780140444490', 'Nausea', 'French', 189.00, '2000-11-30',7),
+('9780415074578', 'Being and Nothingness', 'French',399.00,'2003-08-07', 7),
+('9780140445718', 'Fear and Trembling', 'Danish', 159.00, '2003-09-25', 8),
+('9780691020429', 'The Sickness Unto Death', 'Danish', 199.00, '1983-08-01', 8);
 END;
 
 
@@ -157,7 +157,7 @@ BEGIN
         orderId INT NOT NULL,
         isbn VARCHAR(13) NOT NULL,
         quantity INT NOT NULL CHECK (quantity > 0),
-        unitPrice DECIMAL(10,2) NOT NULL,
+        bookPrice DECIMAL(10, 2) NOT NULL,
         PRIMARY KEY (orderId, isbn),
         CONSTRAINT FK_details_order FOREIGN KEY (orderId) REFERENCES tbl_orders(orderId),
         CONSTRAINT FK_details_book FOREIGN KEY (isbn) REFERENCES tbl_books(isbn)
@@ -166,7 +166,7 @@ END;
 
 IF NOT EXISTS (SELECT 1 FROM tbl_orderDetails)
 BEGIN
-    INSERT INTO tbl_orderDetails (orderId, isbn, quantity, unitPrice) VALUES
+    INSERT INTO tbl_orderDetails (orderId, isbn, quantity, bookPrice) VALUES
     (1, '9780140441185', 1, 169.00),
     (1, '9780140442038', 1, 219.00),
     (2, '9780140449242', 1, 219.00),
@@ -180,15 +180,37 @@ BEGIN
     (7, '9780140444490', 1, 209.00),
     (8, '9780140444490', 1, 189.00),
     (9, '9780486434103', 1, 279.00),
-    (10,'9780140441185',1,169.00),
-    (10,'9780140445718',1,159.00);
+    (10, '9780140441185', 1, 169.00),
+    (10, '9780140445718', 1, 159.00);
 END;
 
---DROP TABLE tbl_books;
---DROP TABLE tbl_bookBalance;
---DROP TABLE tbl_stores;
---DROP TABLE tbl_authors;
---DROP TABLE tbl_orders;
---DROP TABLE tbl_orderDetails;
---DROP TABLE tbl_customers;
+--View
+CREATE VIEW view_authorsAndTitles AS
+SELECT
+    a.firstname + ' ' + a.lastname AS [Name],
+    DATEDIFF(YEAR, a.dateofbirth, a.deathdate)
+    - CASE WHEN DATEADD(YEAR, DATEDIFF(YEAR, a.dateofbirth, a.deathdate), a.dateofbirth) > a.deathdate 
+           THEN 1 ELSE 0 END AS [Age],
+    COUNT(b.isbn) AS [Titles],
+    ISNULL(SUM(bb.amountInStock * b.price), 0) AS [Stock Value(SEK)]
+FROM tbl_authors a 
+JOIN tbl_books b          ON a.id = b.authorId 
+LEFT JOIN tbl_bookBalance bb ON b.isbn = bb.isbn
+GROUP BY 
+    a.firstname, 
+    a.lastname, 
+    a.dateofbirth, 
+    a.deathdate;
+GO
+
+SELECT * FROM view_authorsAndTitles
+ORDER BY [Name];
+
+DROP TABLE tbl_books;
+DROP TABLE tbl_bookBalance;
+DROP TABLE tbl_stores;
+DROP TABLE tbl_authors;
+DROP TABLE tbl_orders;
+DROP TABLE tbl_orderDetails;
+DROP TABLE tbl_customers;
 --REMOVE LATER
